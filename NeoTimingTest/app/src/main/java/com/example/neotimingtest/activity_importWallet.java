@@ -12,7 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.neotimingtest.sdk.Application;
+
 import org.w3c.dom.Text;
+
 
 public class activity_importWallet extends AppCompatActivity {
 
@@ -21,15 +24,24 @@ public class activity_importWallet extends AppCompatActivity {
 //    public static final String K_STR = "k_str";
 //    public static final String K_TITLE = "k_titile";
 //    public static final String K_SUB_TITLE =  "k_sub_title";
+
     private static final String TAG = "IMPORT WALLET";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_wallet);
+
+        Application.startConnection();
+        Boolean isConnected = Application.checkConnection();
+        if(isConnected == false)
+        {
+            Toast.makeText(activity_importWallet.this, "Fail to connect to the Testnet.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activity_importWallet.this, "Successfully connect to the Testnet.", Toast.LENGTH_SHORT).show();
+        }
+
         Button uploadPrivateKeyButton = findViewById(R.id.upload_private_key_button);
         uploadPrivateKeyButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 //Intent intent = new Intent(activity_createWallet.this, activity_createWallet.class);

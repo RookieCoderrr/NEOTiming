@@ -101,13 +101,14 @@ public class Application {
     }
 
     public static void startConnection() {
-        neow3j = Neow3j.build(new HttpService("http://127.0.0.1:50012"));
+        neow3j = Neow3j.build(new HttpService("http://192.168.1.47:50012"));
     }
 
-    private static void checkConnection() throws Exception {
+    public static boolean checkConnection() {
         if (neow3j == null) {
-            throw new Exception("Connection has not been created!");
+            return false;
         }
+        return true;
     }
 
     public static void end() throws Throwable {

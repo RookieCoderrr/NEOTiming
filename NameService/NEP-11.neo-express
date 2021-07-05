@@ -12,7 +12,7 @@
           {
             "private-key": "b858e2a9c9210f1f4a7f739fe7640e92fcece075969604d4e8b497b2c60a7a2f",
             "script-hash": "NLi7Nf7SRnKdLeaBHcPFMki86UJW6zwCdb",
-            "label": null,
+            "label": "Consensus MultiSigContract",
             "is-default": true,
             "contract": {
               "script": "0c2102136b0c47e3cdf01b6a33f3b686741e0190dd187d9662f8e2e6fde373343a87694156e7b327",
@@ -25,7 +25,7 @@
             "private-key": "b858e2a9c9210f1f4a7f739fe7640e92fcece075969604d4e8b497b2c60a7a2f",
             "script-hash": "NfE9FX5jkE7gU64ySRxNij6ZJNNPsy3csb",
             "label": "Consensus MultiSigContract",
-            "is-default": false,
+            "is-default": true,
             "contract": {
               "script": "110c2102136b0c47e3cdf01b6a33f3b686741e0190dd187d9662f8e2e6fde373343a876911419ed0dc3a",
               "parameters": [

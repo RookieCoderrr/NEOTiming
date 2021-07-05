@@ -16,6 +16,11 @@ import com.example.neotimingtest.sdk.Application;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
+import java.math.BigInteger;
+
+import io.neow3j.wallet.Account;
+
 
 public class activity_importWallet extends AppCompatActivity {
 
@@ -31,24 +36,62 @@ public class activity_importWallet extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import_wallet);
 
-        Application.startConnection();
-        Boolean isConnected = Application.checkConnection();
-        if(isConnected == false)
-        {
-            Toast.makeText(activity_importWallet.this, "Fail to connect to the Testnet.", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(activity_importWallet.this, "Successfully connect to the Testnet.", Toast.LENGTH_SHORT).show();
-        }
-
         Button uploadPrivateKeyButton = findViewById(R.id.upload_private_key_button);
         uploadPrivateKeyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Intent intent = new Intent(activity_createWallet.this, activity_createWallet.class);
                 //startActivity(intent);
+
+                // 连接到网络
+                Application.startConnection();
+                Boolean isConnected = Application.checkConnection();
+                if(isConnected == false)
+                {
+                    Toast.makeText(activity_importWallet.this, "Fail to connect to the Testnet.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity_importWallet.this, "Successfully connect to the Testnet.", Toast.LENGTH_SHORT).show();
+                }
+
+                //// 读取text的值
                 EditText wifText = findViewById(R.id.wiftext);
-                Log.v(TAG, "input private key wif: " + wifText.getText().toString());
-                Toast.makeText(activity_importWallet.this, wifText.getText().toString(), Toast.LENGTH_SHORT).show();
+                EditText labelText = findViewById(R.id.labeltext);
+                Toast.makeText(activity_importWallet.this,  labelText.getText().toString()+": "+wifText.getText().toString(), Toast.LENGTH_SHORT).show();
+
+                // wif的值和label的值解析
+                String wifValue = wifText.getText().toString();
+                String labelValue = labelText.getText().toString();
+
+                //Account
+                Application.importAccount(wifValue, labelValue);
+                Application.importWallet();
+
+                Log.d("TAG", Application.getAccount().toString());
+                Log.d("TAG", Application.getWallet().toString());
+
+                //BigInteger res = null;
+                //try {
+                //    res = Application.getGasBalanceOf(Application.getHash160Address());
+                //    Log.d("RESULT", String.valueOf(res));
+                //} catch (IOException e) {
+                //    Log.d("RESULT_ERROR", "no connection");
+                //}
+
+                try {
+                    Application.balanceOf(Application.getHash160Address());
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                    Log.d("RESULT_ERROR", "no connection");
+                }
+
+
+                //try {
+                //    Application.setPoint(2000);
+                //} catch (Throwable throwable) {
+                //    Toast.makeText(activity_importWallet.this, "set points failed", Toast.LENGTH_SHORT).show();
+                //    throwable.printStackTrace();
+                //}
+                //BigInteger points = Application.pointsOf(wifText.getText().toString())
             }
         });
     }

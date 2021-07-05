@@ -3,6 +3,7 @@ package com.example.neotimingtest.sdk;
 import io.neow3j.contract.*;
 import io.neow3j.contract.SmartContract;
 import io.neow3j.protocol.Neow3j;
+import io.neow3j.protocol.core.Neo;
 import io.neow3j.protocol.core.response.NeoInvokeFunction;
 import io.neow3j.protocol.core.response.NeoSendRawTransaction;
 import io.neow3j.protocol.core.stackitem.ByteStringStackItem;
@@ -15,8 +16,10 @@ import io.neow3j.types.ContractParameter;
 import io.neow3j.types.Hash160;
 import io.neow3j.wallet.Account;
 import io.neow3j.wallet.Wallet;
+//import io.neow3j.devpack.contracts.GasToken;
 
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.*;
 
@@ -26,7 +29,7 @@ public class Application {
 
     private static Account account;
     //每次重新部署合约都需要一个新的合约地址
-    private static final String contractAddress = "0xcb36603da2846cf1bd4636971909056fe11023e1";
+    private static final String contractAddress = "0x3f976cb55ee326b5871c99621a84faacde71bc59";
 
     private static Neow3j neow3j;
 
@@ -47,11 +50,64 @@ public class Application {
         "KyoTnS2SNPWK2ZSVfWBcgRvfzhYXAM31zqjULZVAC1yGsFvh2iyQ",
         "KxS4jkVd89S1QFrVjVdBQxoDZtjdyacmVG3ESSRpkWRsDPyJCRQW"};
 
-    public static void importWallet(String wif, String label) {
-        account = Account.fromWIF(wif)
-                .label(label);
-        wallet = Wallet.withAccounts(account).name("elise").version("1.0");
+    public static BigInteger getGasBalanceOf(Hash160 address) throws IOException {
+        String function= "balanceOf";
 
+        ContractParameter usrParam = ContractParameter.hash160(address);
+        List<ContractParameter> params = Arrays.asList(usrParam);
+        Hash160 gasScrictHash = new Hash160("0xd2a4cff31913016155e38e474a2c06d08be276cf");
+        NeoInvokeFunction response = new SmartContract(gasScrictHash, neow3j)
+                .callInvokeFunction(function, params, Signer.calledByEntry(account.getScriptHash()));
+
+        return (BigInteger) response.getInvocationResult().getStack().get(0).getValue();
+    }
+
+    public static BigInteger getBlockchainInfo() throws IOException {
+        return neow3j.getBlockCount().send().getBlockCount();
+    }
+
+    /***
+     * 读取account变量。
+     * @return
+     */
+    public static Account getAccount(){
+        return account;
+    }
+
+    /***
+     * 读取wallet变量
+     * @return
+     */
+    public static Wallet getWallet(){
+        return wallet;
+    }
+
+    /***
+     * 从account得到一个hash160格式的地址
+     * @return Hash160 地址
+     */
+    public static Hash160 getHash160Address(){
+        return account.getScriptHash();
+    }
+
+    /***
+     * 根据wif和label导入一个Account。Account可以用于钱包的导入。
+     * @param wif
+     * @param label
+     * @return
+     */
+    public static void importAccount(String wif, String label) {
+        account = Account.fromWIF(wif).label(label);
+    }
+
+    /***
+     * 导入一个钱包。直接读取account变量就可以了。
+     * @return
+     */
+    public static void importWallet() {
+        //account = Account.fromWIF(wif)
+        //        .label(label);
+        wallet = Wallet.withAccounts(account).name("elise").version("1.0");
     }
 //    public static boolean importWallet(String address){
 //        account = Account.fromAddress(address);
@@ -101,7 +157,8 @@ public class Application {
     }
 
     public static void startConnection() {
-        neow3j = Neow3j.build(new HttpService("http://192.168.1.47:50012"));
+        //neow3j = Neow3j.build(new HttpService("http://192.168.1.47:50012"));
+        neow3j = Neow3j.build(new HttpService("http://192.168.1.47:20332"));
     }
 
     public static boolean checkConnection() {
@@ -142,7 +199,7 @@ public class Application {
         return (BigInteger) response.getInvocationResult().getStack().get(0).getValue();
 
     }
-    public static BigInteger banlanceOf(Hash160 address) throws Throwable {
+    public static BigInteger balanceOf(Hash160 address) throws Throwable {
         String function = "balanceOf";
         checkConnection();
         ContractParameter usrParam = ContractParameter.hash160(address);
@@ -204,7 +261,7 @@ public class Application {
                 .send();
     }
 
-    private static void setPoint(int point) throws Throwable {
+    public static void setPoint(int point) throws Throwable {
         String function = "setPoint";
         ContractParameter pointParam = ContractParameter.integer(point);
         checkConnection();
@@ -330,89 +387,89 @@ public class Application {
 
 
 
-    public static void main(String[] args) throws Throwable {
-        startConnection();
-        importWallet(privateKeyWif, "Neo");
-
-        int num = 9;
-
-        switch (num) {
-            case 1:
-                //createWallet();
-                setPoint(2000);
-                break;
-
-            case 2:
-                Thread.sleep(10000);
-                pointsOf(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                System.out.println(account.getNep17Balances(neow3j));
-                break;
-
-            case 3:
-                withdraw(12, "pants");
-                Thread.sleep(10000);
-                pointsOf(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                System.out.println(account.getNep17Balances(neow3j));
-
-                withdraw(13, "hat");
-                Thread.sleep(10000);
-                pointsOf(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                System.out.println(account.getNep17Balances(neow3j));
-
-                withdraw(15, "glove");
-                Thread.sleep(10000);
-                pointsOf(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                System.out.println(account.getNep17Balances(neow3j));
-
-                withdraw(20, "socks");
-                Thread.sleep(10000);
-                pointsOf(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                System.out.println(account.getNep17Balances(neow3j));
-                break;
-
-            case 4:
-                //查看用户获得的NFT的名字以及数量
-                showMyItems(account.getScriptHash());
-                banlanceOf(account.getScriptHash());
-                break;
-
-            case 5:
-                //查看生成的NFT属性
-                tokenProperties("pants");
-                tokenProperties("hat");
-                tokenProperties("glove");
-                break;
-
-            case 6:
-                onSale(account.getScriptHash(), "hat");
-                onSale(account.getScriptHash(), "pants");
-                onSale(account.getScriptHash(), "socks");
-                break;
-
-            case 7:
-                tokenProperties("hat");
-                tokenProperties("pants");
-                tokenProperties("glove");
-                tokenProperties("socks");
-                break;
-
-            case 8:
-                showOnSaleItems();
-                break;
-
-            case 9:
-                sellOnSaleItem(Hash160.fromAddress("NdqhW7YhhMtgpjdFcqMTXggTP7JHjFFHdm"), "hat");
-                break;
-
-            case 10:
-               
-        }
-    }
+//    public static void main(String[] args) throws Throwable {
+//        startConnection();
+//        importWallet(privateKeyWif, "Neo");
+//
+//        int num = 9;
+//
+//        switch (num) {
+//            case 1:
+//                //createWallet();
+//                setPoint(2000);
+//                break;
+//
+//            case 2:
+//                Thread.sleep(10000);
+//                pointsOf(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                System.out.println(account.getNep17Balances(neow3j));
+//                break;
+//
+//            case 3:
+//                withdraw(12, "pants");
+//                Thread.sleep(10000);
+//                pointsOf(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                System.out.println(account.getNep17Balances(neow3j));
+//
+//                withdraw(13, "hat");
+//                Thread.sleep(10000);
+//                pointsOf(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                System.out.println(account.getNep17Balances(neow3j));
+//
+//                withdraw(15, "glove");
+//                Thread.sleep(10000);
+//                pointsOf(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                System.out.println(account.getNep17Balances(neow3j));
+//
+//                withdraw(20, "socks");
+//                Thread.sleep(10000);
+//                pointsOf(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                System.out.println(account.getNep17Balances(neow3j));
+//                break;
+//
+//            case 4:
+//                //查看用户获得的NFT的名字以及数量
+//                showMyItems(account.getScriptHash());
+//                banlanceOf(account.getScriptHash());
+//                break;
+//
+//            case 5:
+//                //查看生成的NFT属性
+//                tokenProperties("pants");
+//                tokenProperties("hat");
+//                tokenProperties("glove");
+//                break;
+//
+//            case 6:
+//                onSale(account.getScriptHash(), "hat");
+//                onSale(account.getScriptHash(), "pants");
+//                onSale(account.getScriptHash(), "socks");
+//                break;
+//
+//            case 7:
+//                tokenProperties("hat");
+//                tokenProperties("pants");
+//                tokenProperties("glove");
+//                tokenProperties("socks");
+//                break;
+//
+//            case 8:
+//                showOnSaleItems();
+//                break;
+//
+//            case 9:
+//                sellOnSaleItem(Hash160.fromAddress("NdqhW7YhhMtgpjdFcqMTXggTP7JHjFFHdm"), "hat");
+//                break;
+//
+//            case 10:
+//
+//        }
+//    }
 //        if(state == 1){
 ////          createWallet();
 //            setPoint(2000);

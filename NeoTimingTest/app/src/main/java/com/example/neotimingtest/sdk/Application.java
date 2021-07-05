@@ -26,31 +26,17 @@ import java.util.*;
 
 public class Application {
 
-
-<<<<<<< HEAD
-    //每次重新部署合约都需要一个新的合约地址
-<<<<<<< HEAD
-    private static final String contractAddress = "0x3f976cb55ee326b5871c99621a84faacde71bc59";
-=======
-    private static final String contractAddress = "0x86c95ef4cd0f17a3cf3afbe68e10e44ce954356b";
->>>>>>> refs/remotes/origin/main
-
-=======
     public static Account account;
     //每次重新部署合约都需要一个新的合约地址
     private static final String contractAddress = "0x86c95ef4cd0f17a3cf3afbe68e10e44ce954356b";
 
     public static Neow3j neow3j;
->>>>>>> main
 
     private static Wallet wallet;
 
     private static final Hash160 scriptHash = new Hash160(contractAddress);
 
-<<<<<<< HEAD
-=======
     public static final String privateKeyWif = "KybmnDXHZaixQUnrwKBu4LZrEfRrYkGt5cKJpBSTkRjJ8Dqxw7PD";
->>>>>>> main
     //每次重新部署合约后，需要给该地址转gas为了执行合约
     private static final String publickeyAddress = "NicfNxmzhd5f36z7N5Nap3HaT8Z5WB7WKq";
 
@@ -63,7 +49,6 @@ public class Application {
         "KyoTnS2SNPWK2ZSVfWBcgRvfzhYXAM31zqjULZVAC1yGsFvh2iyQ",
         "KxS4jkVd89S1QFrVjVdBQxoDZtjdyacmVG3ESSRpkWRsDPyJCRQW"};
 
-<<<<<<< HEAD
     public static BigInteger getGasBalanceOf(Hash160 address) throws IOException {
         String function= "balanceOf";
 
@@ -79,13 +64,12 @@ public class Application {
     public static BigInteger getBlockchainInfo() throws IOException {
         return neow3j.getBlockCount().send().getBlockCount();
     }
-=======
+
     public static void importWallet(String wif, String label) {
         account = Account.fromWIF(wif)
                 .label(label);
         wallet = Wallet.withAccounts(account).name("zilie").version("1.0");
-<<<<<<< HEAD
->>>>>>> refs/remotes/origin/main
+    }
 
     /***
      * 读取account变量。
@@ -110,8 +94,6 @@ public class Application {
     public static Hash160 getHash160Address(){
         return account.getScriptHash();
     }
-=======
->>>>>>> main
 
     /***
      * 根据wif和label导入一个Account。Account可以用于钱包的导入。
@@ -180,18 +162,10 @@ public class Application {
     }
 
     public static void startConnection() {
-<<<<<<< HEAD
-<<<<<<< HEAD
         //neow3j = Neow3j.build(new HttpService("http://192.168.1.47:50012"));
-        neow3j = Neow3j.build(new HttpService("http://192.168.1.47:20332"));
-=======
+
         neow3j = Neow3j.build(new HttpService("http://192.168.1.47:20332"));
 
->>>>>>> refs/remotes/origin/main
-=======
-        neow3j = Neow3j.build(new HttpService("http://192.168.1.47:20332"));
-
->>>>>>> main
     }
 
     public static boolean checkConnection() {

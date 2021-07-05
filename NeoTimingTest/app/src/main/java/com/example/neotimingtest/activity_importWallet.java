@@ -28,7 +28,7 @@ public class activity_importWallet extends AppCompatActivity {
 //    public static final String K_BOOL = "k_bool";
 //    public static final String K_STR = "k_str";
 //    public static final String K_TITLE = "k_titile";
-//    public static final String K_SUB_TITLE =  "k_sub_title";
+//    public static final String K_SUB_TITLE = "k_sub_title";
 
     private static final String TAG = "IMPORT WALLET";
     @Override
